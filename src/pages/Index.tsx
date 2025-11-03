@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Instagram, Mail } from "lucide-react";
 import ProjectCard from "@/components/ProjectCard";
-import blackHoleBg from "@/assets/black-hole-bg.jpg";
+import blackHoleBg from "@/assets/nasa-black-hole.png";
 
 const Index = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -77,9 +77,9 @@ const Index = () => {
       {/* About Section */}
       <section className="min-h-screen py-20 px-4 md:px-8 flex items-center">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm border-2 border-black p-8 md:p-12 rounded-lg shadow-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-black">About Me</h2>
-            <p className="text-lg md:text-xl text-black leading-relaxed font-mono">
+          <div className="bg-transparent backdrop-blur-sm border-2 border-white p-8 md:p-12 rounded-lg shadow-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">About Me</h2>
+            <p className="text-lg md:text-xl text-white leading-relaxed font-mono">
               Hello, my name is Curren and I like to help people. Ever since I was young, I have had a burning desire to invent. I am from San Francisco, California, and graduated from the University of Utah with a BA in Psychology. I love to travel, meet new people, and watch the bubble float to the top of the honey jar.
             </p>
           </div>
@@ -89,13 +89,13 @@ const Index = () => {
       {/* Contact Section */}
       <section className="min-h-[50vh] py-20 px-4 md:px-8 flex items-center">
         <div className="max-w-4xl mx-auto w-full">
-          <div className="bg-white/80 backdrop-blur-sm border-2 border-black p-8 md:p-12 rounded-lg shadow-2xl text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-black">Get In Touch</h2>
+          <div className="bg-transparent backdrop-blur-sm border-2 border-white p-8 md:p-12 rounded-lg shadow-2xl text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Get In Touch</h2>
             
             <div className="space-y-6 mb-8">
               <a 
                 href="mailto:currenclark@gmail.com"
-                className="flex items-center justify-center gap-3 text-lg md:text-xl text-black hover:underline transition-all duration-300 hover:scale-105"
+                className="flex items-center justify-center gap-3 text-lg md:text-xl text-white hover:underline transition-all duration-300 hover:scale-105"
               >
                 <Mail className="w-6 h-6" />
                 <span className="font-mono">currenclark@gmail.com</span>
@@ -105,14 +105,14 @@ const Index = () => {
                 href="https://www.instagram.com/currenclark/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 text-lg md:text-xl text-black hover:underline transition-all duration-300 hover:scale-105"
+                className="flex items-center justify-center gap-3 text-lg md:text-xl text-white hover:underline transition-all duration-300 hover:scale-105"
               >
                 <Instagram className="w-6 h-6" />
                 <span className="font-mono">@currenclark</span>
               </a>
             </div>
 
-            <p className="text-black/70 font-mono text-sm md:text-base">
+            <p className="text-white/70 font-mono text-sm md:text-base">
               Contact if you would like me to design an app or website for you.
             </p>
           </div>

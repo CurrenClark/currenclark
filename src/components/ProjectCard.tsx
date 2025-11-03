@@ -14,21 +14,21 @@ const ProjectCard = ({ title, url, type, comingSoon }: ProjectCardProps) => {
 
   return (
     <CardWrapper {...cardProps} className="block">
-      <Card className="h-full bg-white/80 backdrop-blur-sm border-2 border-black transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white/90">
+      <Card className="h-full bg-transparent backdrop-blur-sm border-2 border-white transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-white/10">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-2xl font-bold text-black">{title}</CardTitle>
-            {url && !comingSoon && <ExternalLink className="w-5 h-5 text-black flex-shrink-0" />}
+            <CardTitle className="text-2xl font-bold text-white">{title}</CardTitle>
+            {url && !comingSoon && <ExternalLink className="w-5 h-5 text-white flex-shrink-0" />}
           </div>
-          <CardDescription className="text-black/70 font-mono">
+          <CardDescription className="text-white/70 font-mono">
             {type === "website" ? "Website" : "Mobile App"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {comingSoon ? (
-            <p className="text-black font-bold text-lg">Coming Soon</p>
+            <p className="text-white font-bold text-lg">Coming Soon</p>
           ) : (
-            <p className="text-black/80 font-mono text-sm break-all">{url}</p>
+            <p className="text-white/80 font-mono text-sm break-all">{url}</p>
           )}
         </CardContent>
       </Card>
