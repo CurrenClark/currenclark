@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Instagram, Mail } from "lucide-react";
 import ProjectCard from "@/components/ProjectCard";
-import mountainBg from "@/assets/mountain-bg.jpg";
+import blackHoleBg from "@/assets/black-hole-bg.jpg";
 
 const Index = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -32,7 +32,7 @@ const Index = () => {
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
         style={{ 
-          backgroundImage: `url(${mountainBg})`,
+          backgroundImage: `url(${blackHoleBg})`,
           backgroundAttachment: 'fixed'
         }}
       />
