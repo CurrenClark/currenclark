@@ -1,8 +1,50 @@
 import { Instagram, Mail } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import ProjectCard from "@/components/ProjectCard";
 import blackHoleBg from "@/assets/nasa-black-hole.png";
 
 const Index = () => {
+  const projectsRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  
+  const [projectsTransform, setProjectsTransform] = useState({ scale: 1, opacity: 1 });
+  const [aboutTransform, setAboutTransform] = useState({ scale: 1, opacity: 1 });
+  const [contactTransform, setContactTransform] = useState({ scale: 1, opacity: 1 });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const centerY = window.innerHeight / 2;
+      
+      const calculateTransform = (element: HTMLElement | null) => {
+        if (!element) return { scale: 1, opacity: 1 };
+        
+        const rect = element.getBoundingClientRect();
+        const elementCenterY = rect.top + rect.height / 2;
+        const distance = Math.abs(elementCenterY - centerY);
+        const maxDistance = window.innerHeight;
+        
+        // When element is at center, scale is 1 and opacity is 1
+        // As it moves away from center, it shrinks and fades
+        let scale = 1 - (distance / maxDistance) * 0.9;
+        scale = Math.max(0.1, Math.min(1, scale));
+        
+        let opacity = 1 - (distance / maxDistance) * 1.2;
+        opacity = Math.max(0, Math.min(1, opacity));
+        
+        return { scale, opacity };
+      };
+      
+      setProjectsTransform(calculateTransform(projectsRef.current));
+      setAboutTransform(calculateTransform(aboutRef.current));
+      setContactTransform(calculateTransform(contactRef.current));
+    };
+    
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="relative min-h-screen font-press-start">
       {/* Fixed Background */}
@@ -15,7 +57,15 @@ const Index = () => {
       />
 
       {/* Projects Section */}
-      <section className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center">
+      <section 
+        ref={projectsRef}
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        style={{
+          transform: `scale(${projectsTransform.scale})`,
+          opacity: projectsTransform.opacity,
+          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+        }}
+      >
         <div className="max-w-2xl mx-auto w-full space-y-8">
           <ProjectCard 
             title="Thrift Space"
@@ -36,7 +86,15 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center">
+      <section 
+        ref={aboutRef}
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        style={{
+          transform: `scale(${aboutTransform.scale})`,
+          opacity: aboutTransform.opacity,
+          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+        }}
+      >
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">About Me</h2>
           <p className="text-lg md:text-xl text-white leading-relaxed">
@@ -46,7 +104,15 @@ const Index = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center">
+      <section 
+        ref={contactRef}
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        style={{
+          transform: `scale(${contactTransform.scale})`,
+          opacity: contactTransform.opacity,
+          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+        }}
+      >
         <div className="max-w-4xl mx-auto w-full text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Get In Touch</h2>
           
