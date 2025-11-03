@@ -4,73 +4,81 @@ import ProjectCard from "@/components/ProjectCard";
 import blackHoleBg from "@/assets/nasa-black-hole.png";
 
 const Index = () => {
-  const projectsRef = useRef<HTMLElement>(null);
-  const aboutRef = useRef<HTMLElement>(null);
-  const contactRef = useRef<HTMLElement>(null);
-  
+  const containerRef = useRef<HTMLDivElement>(null);
   const [projectsTransform, setProjectsTransform] = useState({ scale: 1, opacity: 1 });
   const [aboutTransform, setAboutTransform] = useState({ scale: 1, opacity: 1 });
   const [contactTransform, setContactTransform] = useState({ scale: 1, opacity: 1 });
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
+    let scrollProgress = 0;
+    const totalSections = 3;
+    const scrollSensitivity = 0.5;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
       
-      const calculateTransform = (element: HTMLElement | null, index: number) => {
-        if (!element) return { scale: 1, opacity: 1 };
+      const delta = e.deltaY * scrollSensitivity;
+      scrollProgress += delta * 0.001;
+      scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
+      
+      updateTransforms();
+    };
+
+    const updateTransforms = () => {
+      const calculateTransform = (sectionIndex: number) => {
+        const sectionProgress = scrollProgress - sectionIndex;
         
-        const sectionHeight = viewportHeight;
-        const sectionScrollStart = index * sectionHeight;
-        const sectionScrollEnd = (index + 1) * sectionHeight;
-        
-        // If we're before this section
-        if (scrollY < sectionScrollStart) {
-          // Don't show at all until previous section is done
-          return { scale: 5, opacity: 0 };
+        // Before this section (coming up next)
+        if (sectionProgress < 0) {
+          return { scale: 0.1, opacity: 0 };
         }
         
-        // If we're in this section
-        if (scrollY >= sectionScrollStart && scrollY < sectionScrollEnd) {
-          // First 10% of section: fade in from zoomed
-          const progressInSection = (scrollY - sectionScrollStart) / sectionHeight;
-          
-          if (progressInSection < 0.1) {
-            // Coming in: zoom from 5x to 1x
-            const fadeProgress = progressInSection / 0.1;
-            const scale = 5 - (fadeProgress * 4);
-            const opacity = fadeProgress;
-            return { scale, opacity };
-          }
-          
-          // Middle 80%: stay at full view
-          if (progressInSection < 0.9) {
-            return { scale: 1, opacity: 1 };
-          }
-          
-          // Last 10%: zoom out to center
-          const exitProgress = (progressInSection - 0.9) / 0.1;
-          const scale = 1 - exitProgress;
-          const opacity = 1 - exitProgress;
+        // Entering phase (0 to 0.2): zoom in from small to normal
+        if (sectionProgress < 0.2) {
+          const progress = sectionProgress / 0.2;
+          const scale = 0.1 + (progress * 0.9);
+          const opacity = progress;
           return { scale, opacity };
         }
         
-        // If we've scrolled past
-        return { scale: 0, opacity: 0 };
+        // Display phase (0.2 to 0.8): stay visible
+        if (sectionProgress < 0.8) {
+          return { scale: 1, opacity: 1 };
+        }
+        
+        // Exit phase (0.8 to 1.0): zoom out to point
+        if (sectionProgress < 1.0) {
+          const progress = (sectionProgress - 0.8) / 0.2;
+          const scale = 1 - (progress * 0.99);
+          const opacity = 1 - progress;
+          return { scale, opacity };
+        }
+        
+        // After this section
+        return { scale: 0.01, opacity: 0 };
       };
-      
-      setProjectsTransform(calculateTransform(projectsRef.current, 0));
-      setAboutTransform(calculateTransform(aboutRef.current, 1));
-      setContactTransform(calculateTransform(contactRef.current, 2));
+
+      setProjectsTransform(calculateTransform(0));
+      setAboutTransform(calculateTransform(1));
+      setContactTransform(calculateTransform(2));
     };
-    
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    updateTransforms();
+
+    return () => {
+      if (container) {
+        container.removeEventListener('wheel', handleWheel);
+      }
+    };
   }, []);
 
   return (
-    <div className="relative font-press-start">
+    <div ref={containerRef} className="relative font-press-start h-screen w-screen overflow-hidden">
       {/* Fixed Background */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
@@ -79,18 +87,15 @@ const Index = () => {
           backgroundAttachment: 'fixed'
         }}
       />
-      
-      {/* Spacer to enable scrolling */}
-      <div style={{ height: '300vh' }} />
 
       {/* Projects Section */}
       <section 
-        ref={projectsRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
+        className="h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${projectsTransform.scale})`,
           opacity: projectsTransform.opacity,
-          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none',
+          transformOrigin: 'center center'
         }}
       >
         <div className="max-w-2xl mx-auto w-full space-y-8">
@@ -114,12 +119,12 @@ const Index = () => {
 
       {/* About Section */}
       <section 
-        ref={aboutRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
+        className="h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${aboutTransform.scale})`,
           opacity: aboutTransform.opacity,
-          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none',
+          transformOrigin: 'center center'
         }}
       >
         <div className="max-w-4xl mx-auto text-center">
@@ -132,12 +137,12 @@ const Index = () => {
 
       {/* Contact Section */}
       <section 
-        ref={contactRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
+        className="h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${contactTransform.scale})`,
           opacity: contactTransform.opacity,
-          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none',
+          transformOrigin: 'center center'
         }}
       >
         <div className="max-w-4xl mx-auto w-full text-center">
