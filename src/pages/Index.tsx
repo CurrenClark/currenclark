@@ -10,15 +10,15 @@ const Index = () => {
   const [contactTransform, setContactTransform] = useState({ scale: 1, opacity: 1 });
 
   useEffect(() => {
-    let scrollProgress = 0.15; // Start with first section visible
+    let scrollProgress = 0.4; // Start with first section visible
     const totalSections = 3;
-    const scrollSensitivity = 0.5;
+    const scrollSensitivity = 0.8;
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       
       const delta = e.deltaY * scrollSensitivity;
-      scrollProgress += delta * 0.001;
+      scrollProgress += delta * 0.0015;
       scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
       
       updateTransforms();
@@ -29,26 +29,26 @@ const Index = () => {
         const sectionProgress = scrollProgress - sectionIndex;
         
         // Before this section (waiting to enter)
-        if (sectionProgress < -0.15) {
+        if (sectionProgress < 0) {
           return { scale: 5, opacity: 0 };
         }
         
-        // Entering phase (-0.15 to 0): zoom in from massive to normal
-        if (sectionProgress < 0) {
-          const progress = (sectionProgress + 0.15) / 0.15;
+        // Entering phase (0 to 0.3): zoom in from massive to normal
+        if (sectionProgress < 0.3) {
+          const progress = sectionProgress / 0.3;
           const scale = 5 - (progress * 4);
           const opacity = progress;
           return { scale, opacity };
         }
         
-        // Display phase (0 to 0.85): stay visible
-        if (sectionProgress < 0.85) {
+        // Display phase (0.3 to 0.5): stay visible briefly
+        if (sectionProgress < 0.5) {
           return { scale: 1, opacity: 1 };
         }
         
-        // Exit phase (0.85 to 1.0): zoom out to point
+        // Exit phase (0.5 to 1.0): zoom out to point
         if (sectionProgress < 1.0) {
-          const progress = (sectionProgress - 0.85) / 0.15;
+          const progress = (sectionProgress - 0.5) / 0.5;
           const scale = 1 - (progress * 0.99);
           const opacity = 1 - progress;
           return { scale, opacity };
