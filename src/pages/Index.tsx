@@ -10,7 +10,7 @@ const Index = () => {
   const [contactTransform, setContactTransform] = useState({ scale: 1, opacity: 1 });
 
   useEffect(() => {
-    let scrollProgress = 0;
+    let scrollProgress = 0.15; // Start with first section visible
     const totalSections = 3;
     const scrollSensitivity = 0.5;
 
@@ -28,27 +28,27 @@ const Index = () => {
       const calculateTransform = (sectionIndex: number) => {
         const sectionProgress = scrollProgress - sectionIndex;
         
-        // Before this section (coming up next)
-        if (sectionProgress < 0) {
-          return { scale: 0.1, opacity: 0 };
+        // Before this section (waiting to enter)
+        if (sectionProgress < -0.15) {
+          return { scale: 5, opacity: 0 };
         }
         
-        // Entering phase (0 to 0.2): zoom in from small to normal
-        if (sectionProgress < 0.2) {
-          const progress = sectionProgress / 0.2;
-          const scale = 0.1 + (progress * 0.9);
+        // Entering phase (-0.15 to 0): zoom in from massive to normal
+        if (sectionProgress < 0) {
+          const progress = (sectionProgress + 0.15) / 0.15;
+          const scale = 5 - (progress * 4);
           const opacity = progress;
           return { scale, opacity };
         }
         
-        // Display phase (0.2 to 0.8): stay visible
-        if (sectionProgress < 0.8) {
+        // Display phase (0 to 0.85): stay visible
+        if (sectionProgress < 0.85) {
           return { scale: 1, opacity: 1 };
         }
         
-        // Exit phase (0.8 to 1.0): zoom out to point
+        // Exit phase (0.85 to 1.0): zoom out to point
         if (sectionProgress < 1.0) {
-          const progress = (sectionProgress - 0.8) / 0.2;
+          const progress = (sectionProgress - 0.85) / 0.15;
           const scale = 1 - (progress * 0.99);
           const opacity = 1 - progress;
           return { scale, opacity };
