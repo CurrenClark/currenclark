@@ -14,30 +14,41 @@ const Index = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const centerY = window.innerHeight / 2;
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
       
-      const calculateTransform = (element: HTMLElement | null) => {
+      const calculateTransform = (element: HTMLElement | null, index: number) => {
         if (!element) return { scale: 1, opacity: 1 };
         
-        const rect = element.getBoundingClientRect();
-        const elementCenterY = rect.top + rect.height / 2;
-        const distance = Math.abs(elementCenterY - centerY);
-        const maxDistance = window.innerHeight;
+        // Calculate which "section" we're in based on scroll
+        const sectionHeight = viewportHeight;
+        const sectionScrollStart = index * sectionHeight;
+        const sectionScrollEnd = (index + 1) * sectionHeight;
         
-        // When element is at center, scale is 1 and opacity is 1
-        // As it moves away from center, it shrinks and fades
-        let scale = 1 - (distance / maxDistance) * 0.9;
-        scale = Math.max(0.1, Math.min(1, scale));
+        // If we're before this section, it should be zoomed in (coming from future)
+        if (scrollY < sectionScrollStart) {
+          const progress = (sectionScrollStart - scrollY) / sectionHeight;
+          // Starts at scale 4 when far away, approaches 1 as we get closer
+          const scale = 1 + (progress * 3);
+          const opacity = Math.max(0, 1 - progress);
+          return { scale, opacity };
+        }
         
-        let opacity = 1 - (distance / maxDistance) * 1.2;
-        opacity = Math.max(0, Math.min(1, opacity));
+        // If we're in this section, scale from 1 to 0 as we scroll through
+        if (scrollY >= sectionScrollStart && scrollY < sectionScrollEnd) {
+          const progress = (scrollY - sectionScrollStart) / sectionHeight;
+          const scale = 1 - progress;
+          const opacity = 1 - progress;
+          return { scale: Math.max(0, scale), opacity: Math.max(0, opacity) };
+        }
         
-        return { scale, opacity };
+        // If we've scrolled past, it should be invisible
+        return { scale: 0, opacity: 0 };
       };
       
-      setProjectsTransform(calculateTransform(projectsRef.current));
-      setAboutTransform(calculateTransform(aboutRef.current));
-      setContactTransform(calculateTransform(contactRef.current));
+      setProjectsTransform(calculateTransform(projectsRef.current, 0));
+      setAboutTransform(calculateTransform(aboutRef.current, 1));
+      setContactTransform(calculateTransform(contactRef.current, 2));
     };
     
     handleScroll();
@@ -46,7 +57,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen font-press-start">
+    <div className="relative font-press-start">
       {/* Fixed Background */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
@@ -55,15 +66,18 @@ const Index = () => {
           backgroundAttachment: 'fixed'
         }}
       />
+      
+      {/* Spacer to enable scrolling */}
+      <div style={{ height: '300vh' }} />
 
       {/* Projects Section */}
       <section 
         ref={projectsRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${projectsTransform.scale})`,
           opacity: projectsTransform.opacity,
-          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-2xl mx-auto w-full space-y-8">
@@ -88,11 +102,11 @@ const Index = () => {
       {/* About Section */}
       <section 
         ref={aboutRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${aboutTransform.scale})`,
           opacity: aboutTransform.opacity,
-          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-4xl mx-auto text-center">
@@ -106,11 +120,11 @@ const Index = () => {
       {/* Contact Section */}
       <section 
         ref={contactRef}
-        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center"
+        className="min-h-screen py-20 px-4 md:px-8 flex items-center justify-center fixed inset-0"
         style={{
           transform: `scale(${contactTransform.scale})`,
           opacity: contactTransform.opacity,
-          transition: "transform 0.1s ease-out, opacity 0.1s ease-out"
+          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-4xl mx-auto w-full text-center">
