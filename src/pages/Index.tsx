@@ -20,38 +20,42 @@ const Index = () => {
       const calculateTransform = (element: HTMLElement | null, index: number) => {
         if (!element) return { scale: 1, opacity: 1 };
         
-        // Calculate which "section" we're in based on scroll
         const sectionHeight = viewportHeight;
         const sectionScrollStart = index * sectionHeight;
         const sectionScrollEnd = (index + 1) * sectionHeight;
         
         // If we're before this section
         if (scrollY < sectionScrollStart) {
-          // Only start showing next section when we're 80% through previous section
-          const previousSectionEnd = sectionScrollStart;
-          const previousSectionTransitionStart = previousSectionEnd - (sectionHeight * 0.2);
+          // Don't show at all until previous section is done
+          return { scale: 5, opacity: 0 };
+        }
+        
+        // If we're in this section
+        if (scrollY >= sectionScrollStart && scrollY < sectionScrollEnd) {
+          // First 10% of section: fade in from zoomed
+          const progressInSection = (scrollY - sectionScrollStart) / sectionHeight;
           
-          if (scrollY < previousSectionTransitionStart) {
-            // Too early, stay hidden and zoomed in
-            return { scale: 5, opacity: 0 };
+          if (progressInSection < 0.1) {
+            // Coming in: zoom from 5x to 1x
+            const fadeProgress = progressInSection / 0.1;
+            const scale = 5 - (fadeProgress * 4);
+            const opacity = fadeProgress;
+            return { scale, opacity };
           }
           
-          // Transition in during last 20% of previous section
-          const progress = (scrollY - previousSectionTransitionStart) / (sectionHeight * 0.2);
-          const scale = 5 - (progress * 4); // Goes from 5 to 1
-          const opacity = progress; // Goes from 0 to 1
+          // Middle 80%: stay at full view
+          if (progressInSection < 0.9) {
+            return { scale: 1, opacity: 1 };
+          }
+          
+          // Last 10%: zoom out to center
+          const exitProgress = (progressInSection - 0.9) / 0.1;
+          const scale = 1 - exitProgress;
+          const opacity = 1 - exitProgress;
           return { scale, opacity };
         }
         
-        // If we're in this section, scale from 1 to 0 as we scroll through
-        if (scrollY >= sectionScrollStart && scrollY < sectionScrollEnd) {
-          const progress = (scrollY - sectionScrollStart) / sectionHeight;
-          const scale = 1 - progress;
-          const opacity = 1 - progress;
-          return { scale: Math.max(0, scale), opacity: Math.max(0, opacity) };
-        }
-        
-        // If we've scrolled past, it should be invisible
+        // If we've scrolled past
         return { scale: 0, opacity: 0 };
       };
       
@@ -86,8 +90,7 @@ const Index = () => {
         style={{
           transform: `scale(${projectsTransform.scale})`,
           opacity: projectsTransform.opacity,
-          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none',
-          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
+          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-2xl mx-auto w-full space-y-8">
@@ -116,8 +119,7 @@ const Index = () => {
         style={{
           transform: `scale(${aboutTransform.scale})`,
           opacity: aboutTransform.opacity,
-          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none',
-          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
+          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-4xl mx-auto text-center">
@@ -135,8 +137,7 @@ const Index = () => {
         style={{
           transform: `scale(${contactTransform.scale})`,
           opacity: contactTransform.opacity,
-          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none',
-          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
+          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none'
         }}
       >
         <div className="max-w-4xl mx-auto w-full text-center">
