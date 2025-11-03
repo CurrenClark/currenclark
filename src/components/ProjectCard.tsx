@@ -12,7 +12,7 @@ const ProjectCard = ({ title, url, type, comingSoon }: ProjectCardProps) => {
   return (
     <CardWrapper {...cardProps} className="block text-center py-3">
       <div className="transition-all duration-300 hover:scale-110">
-        <p className="text-2xl md:text-3xl font-bold text-white font-mono hover:underline">
+        <p className="text-2xl md:text-3xl font-bold text-white hover:underline">
           {title}
           {comingSoon && <span className="text-white/60 text-lg ml-2">(Coming Soon)</span>}
         </p>
