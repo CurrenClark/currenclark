@@ -25,12 +25,21 @@ const Index = () => {
         const sectionScrollStart = index * sectionHeight;
         const sectionScrollEnd = (index + 1) * sectionHeight;
         
-        // If we're before this section, it should be zoomed in (coming from future)
+        // If we're before this section
         if (scrollY < sectionScrollStart) {
-          const progress = (sectionScrollStart - scrollY) / sectionHeight;
-          // Starts at scale 4 when far away, approaches 1 as we get closer
-          const scale = 1 + (progress * 3);
-          const opacity = Math.max(0, 1 - progress);
+          // Only start showing next section when we're 80% through previous section
+          const previousSectionEnd = sectionScrollStart;
+          const previousSectionTransitionStart = previousSectionEnd - (sectionHeight * 0.2);
+          
+          if (scrollY < previousSectionTransitionStart) {
+            // Too early, stay hidden and zoomed in
+            return { scale: 5, opacity: 0 };
+          }
+          
+          // Transition in during last 20% of previous section
+          const progress = (scrollY - previousSectionTransitionStart) / (sectionHeight * 0.2);
+          const scale = 5 - (progress * 4); // Goes from 5 to 1
+          const opacity = progress; // Goes from 0 to 1
           return { scale, opacity };
         }
         
@@ -77,7 +86,8 @@ const Index = () => {
         style={{
           transform: `scale(${projectsTransform.scale})`,
           opacity: projectsTransform.opacity,
-          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: projectsTransform.opacity > 0.5 ? 'auto' : 'none',
+          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
         }}
       >
         <div className="max-w-2xl mx-auto w-full space-y-8">
@@ -106,7 +116,8 @@ const Index = () => {
         style={{
           transform: `scale(${aboutTransform.scale})`,
           opacity: aboutTransform.opacity,
-          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: aboutTransform.opacity > 0.5 ? 'auto' : 'none',
+          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
         }}
       >
         <div className="max-w-4xl mx-auto text-center">
@@ -124,7 +135,8 @@ const Index = () => {
         style={{
           transform: `scale(${contactTransform.scale})`,
           opacity: contactTransform.opacity,
-          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none'
+          pointerEvents: contactTransform.opacity > 0.5 ? 'auto' : 'none',
+          transition: 'transform 0.3s ease-out, opacity 0.3s ease-out'
         }}
       >
         <div className="max-w-4xl mx-auto w-full text-center">
