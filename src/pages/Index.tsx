@@ -150,9 +150,7 @@ const Index = () => {
             </a>
           </div>
 
-          <p className="text-white/70 text-sm md:text-base">
-            Contact if you would like me to design an app or website for you.
-          </p>
+          
         </div>
       </section>
     </div>;
