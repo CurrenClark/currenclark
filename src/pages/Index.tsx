@@ -20,11 +20,27 @@ const Index = () => {
     let scrollProgress = 0.4; // Start with first section visible
     const totalSections = 3;
     const scrollSensitivity = 0.8;
+    let touchStartY = 0;
+    
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const delta = e.deltaY * scrollSensitivity;
       scrollProgress += delta * 0.0015;
       scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
+      updateTransforms();
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touchY = e.touches[0].clientY;
+      const delta = (touchStartY - touchY) * scrollSensitivity;
+      scrollProgress += delta * 0.002;
+      scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
+      touchStartY = touchY;
       updateTransforms();
     };
     const updateTransforms = () => {
@@ -84,11 +100,19 @@ const Index = () => {
       container.addEventListener('wheel', handleWheel, {
         passive: false
       });
+      container.addEventListener('touchstart', handleTouchStart, {
+        passive: false
+      });
+      container.addEventListener('touchmove', handleTouchMove, {
+        passive: false
+      });
     }
     updateTransforms();
     return () => {
       if (container) {
         container.removeEventListener('wheel', handleWheel);
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
       }
     };
   }, []);
