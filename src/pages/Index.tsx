@@ -122,9 +122,7 @@ const Index = () => {
     }}>
         <div className="max-w-4xl mx-auto text-center">
           
-          <p className="text-lg md:text-xl text-white leading-relaxed">
-            Hello, my name is Curren and I like to help people. Ever since I was young, I have had a burning desire to invent. I am from San Francisco, California, and graduated from the University of Utah with a BA in Psychology. I love to travel, meet new people, and watch the bubble float to the top of the honey jar.
-          </p>
+          <p className="text-lg text-white leading-relaxed md:text-base">Hello internet users, my name is Curren. I grew up in San Francisco, and love to help people. There are many issues I care deeply about, yet few I have the capacity to change. My works are an attempt to make a difference.</p>
         </div>
       </section>
 
@@ -136,17 +134,17 @@ const Index = () => {
       transformOrigin: 'center center'
     }}>
         <div className="max-w-4xl mx-auto w-full text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Get In Touch</h2>
+          <h2 className="text-3xl font-bold mb-8 text-white md:text-2xl">Contact</h2>
           
           <div className="space-y-6 mb-8">
             <a href="mailto:currenclark@gmail.com" className="flex items-center justify-center gap-3 text-lg md:text-xl text-white hover:underline transition-all duration-300 hover:scale-105">
               <Mail className="w-6 h-6" />
-              <span>currenclark@gmail.com</span>
+              <span className="text-base">currenclark@gmail.com</span>
             </a>
             
             <a href="https://www.instagram.com/currenclark/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 text-lg md:text-xl text-white hover:underline transition-all duration-300 hover:scale-105">
               <Instagram className="w-6 h-6" />
-              <span>@currenclark</span>
+              <span className="text-base">@currenclark</span>
             </a>
           </div>
 
