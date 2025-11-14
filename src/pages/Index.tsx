@@ -19,15 +19,22 @@ const Index = () => {
   useEffect(() => {
     let scrollProgress = 0.4; // Start with first section visible
     const totalSections = 3;
-    const scrollSensitivity = 0.8;
+    const scrollSensitivity = 0.5;
     let touchStartY = 0;
+    let animationFrameId: number | null = null;
     
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const delta = e.deltaY * scrollSensitivity;
-      scrollProgress += delta * 0.0015;
+      scrollProgress += delta * 0.001;
       scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
-      updateTransforms();
+      
+      if (animationFrameId === null) {
+        animationFrameId = requestAnimationFrame(() => {
+          updateTransforms();
+          animationFrameId = null;
+        });
+      }
     };
 
     const handleTouchStart = (e: TouchEvent) => {
@@ -38,10 +45,16 @@ const Index = () => {
       e.preventDefault();
       const touchY = e.touches[0].clientY;
       const delta = (touchStartY - touchY) * scrollSensitivity;
-      scrollProgress += delta * 0.002;
+      scrollProgress += delta * 0.0015;
       scrollProgress = Math.max(0, Math.min(totalSections - 0.001, scrollProgress));
       touchStartY = touchY;
-      updateTransforms();
+      
+      if (animationFrameId === null) {
+        animationFrameId = requestAnimationFrame(() => {
+          updateTransforms();
+          animationFrameId = null;
+        });
+      }
     };
     const updateTransforms = () => {
       const calculateTransform = (sectionIndex: number) => {
@@ -55,30 +68,32 @@ const Index = () => {
           };
         }
 
-        // Entering phase (0 to 0.3): zoom in from massive to normal
-        if (sectionProgress < 0.3) {
-          const progress = sectionProgress / 0.3;
-          const scale = 5 - progress * 4;
-          const opacity = progress;
+        // Entering phase (0 to 0.4): zoom in from massive to normal
+        if (sectionProgress < 0.4) {
+          const progress = sectionProgress / 0.4;
+          const easeProgress = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+          const scale = 5 - easeProgress * 4;
+          const opacity = easeProgress;
           return {
             scale,
             opacity
           };
         }
 
-        // Display phase (0.3 to 0.5): stay visible briefly
-        if (sectionProgress < 0.5) {
+        // Display phase (0.4 to 0.6): stay visible
+        if (sectionProgress < 0.6) {
           return {
             scale: 1,
             opacity: 1
           };
         }
 
-        // Exit phase (0.5 to 1.0): zoom out to point
+        // Exit phase (0.6 to 1.0): zoom out to point
         if (sectionProgress < 1.0) {
-          const progress = (sectionProgress - 0.5) / 0.5;
-          const scale = 1 - progress * 0.99;
-          const opacity = 1 - progress;
+          const progress = (sectionProgress - 0.6) / 0.4;
+          const easeProgress = Math.pow(progress, 3); // Ease in cubic
+          const scale = 1 - easeProgress * 0.99;
+          const opacity = 1 - easeProgress;
           return {
             scale,
             opacity
