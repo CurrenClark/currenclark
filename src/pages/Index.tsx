@@ -146,7 +146,7 @@ const Index = () => {
       transformOrigin: 'center center'
     }}>
         <div className="max-w-2xl mx-auto w-full space-y-4">
-          <ProjectCard title="Peer Pressure" url="https://peer-pressure.app" type="app" />
+          <ProjectCard title="Peer Pressure" url="https://www.peer-pressure.app/preview" type="app" />
           <ProjectCard title="ModernBlue" url="https://modernblue.app" type="app" />
           <ProjectCard title="BRICSHQ" url="https://bricshq.trade" type="website" />
           <ProjectCard title="Ballot Hunter" url="https://ballot-hunter.com" type="website" />
